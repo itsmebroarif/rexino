@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Rexino</title>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
+  <style>
+    body {
+      background-color: #333;
+      color: #fff;
+    }
+
+    .rupiah-input::before {
+      content: "Rp ";
+    }
+
+    .center-table {
+      margin: auto;
+      float: none;
+    }
+
+    .table-dark tbody tr {
+      background-color: #fff;
+      color: #333;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="app" class="container mt-4">
+    <h1 class="display-4">Rexino Invoice Manager</h1>
+    <h5 class="lead">Developed by : Arif Alexander</h5>
+    <hr>
+    <div class="row">
+      <div class="col-md-6">
+        <form v-if="!editMode" @submit.prevent="addInvoice">
+          <div class="form-group">
+            <label for="invoiceNumber">Invoice Number</label>
+            <input type="text" class="form-control" id="invoiceNumber" v-model="invoiceNumber" required>
+          </div>
+          <div class="form-group">
+            <label for="amount">Amount (Rp)</label>
+            <input type="number" class="form-control rupiah-input" id="amount" v-model="amount" required>
+          </div>
+          <div class="form-group">
+            <label for="discount">Discount (%)</label>
+            <input type="number" class="form-control" id="discount" v-model="discount" min="0" max="100" required>
+          </div>
+          <button type="submit" class="btn btn-primary">Add Invoice</button>
+        </form>
+        <form v-else @submit.prevent="updateInvoice">
+          <div class="form-group">
+            <label for="invoiceNumber">Product & Service</label>
+            <input type="text" class="form-control" id="invoiceNumber" v-model="editedInvoice.invoiceNumber" required>
+          </div>
+          <div class="form-group">
+            <label for="amount">Amount (Rp)</label>
+            <input type="number" class="form-control rupiah-input" id="amount" v-model="editedInvoice.amount" required>
+          </div>
+          <div class="form-group">
+            <label for="discount">Discount (%)</label>
+            <input type="number" class="form-control" id="discount" v-model="editedInvoice.discount" min="0" max="100" required>
+          </div>
+          <button type="submit" class="btn btn-success">Update Invoice</button>
+          <button @click="cancelEdit" class="btn btn-secondary">Cancel</button>
+        </form>
+      </div>
+      <div class="col-md-6">
+        <h2>Total</h2>
+        <h3>{{ formatCurrency(totalAmount - discountAmount) }}</h3>
+      </div>
+    </div>
+    <hr>
+    <div class="row">
+      <div class="col-md-12 center-table">
+        <h2>Invoices</h2>
+        <table class="table table-dark">
+          <thead>
+            <tr>
+              <th>Invoice Number</th>
+              <th>Amount (Rp)</th>
+              <th>Discount (%)</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="invoice in invoices" :key="invoice.id">
+              <td>{{ invoice.invoiceNumber }}</td>
+              <td>{{ formatCurrency(invoice.amount) }}</td>
+              <td>{{ invoice.discount }}</td>
+              <td>
+                <button @click="editInvoice(invoice)" class="btn btn-primary">Edit</button>
+                <button @click="deleteInvoice(invoice.id)" class="btn btn-danger">Delete</button>
+              </td>
+            </tr>
+          </tbody>
+          <tfoot>
+            <tr>
+              <th>Total</th>
+              <th>{{ formatCurrency(totalAmount) }}</th>
+              <th>{{ formatCurrency(discountAmount) }}</th>
+              <th></th>
+            </tr>
+          </tfoot>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/vue@2.6.12/dist/vue.js"></script>
+  <script src="js/script.js"></script>
+</body>
+
+</html>
